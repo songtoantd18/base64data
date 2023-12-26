@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose File and Play Video</title>
+</head>
+
+<body>
+
+    <a href="#" onclick="chooseFile()">Choose File</a>
+    <a href="#" onclick="convertVideoToBase64()">Convert Video to Base64</a>
+
+    <!-- Input để chọn tệp -->
+    <input type="file" id="fileInput" style="display:none" accept="video/*">
+
+    <!-- Thẻ video để chơi video -->
+    <video controls id="myVideo" width="400">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Hiển thị giá trị Base64 -->
+    <div id="base64Value"></div>
+
+    <script>
+        // Biến toàn cục để lưu trữ giá trị base64Data
+        var base64Data;
+
+        function chooseFile() {
+            // Kích hoạt sự kiện click trên input file khi người dùng nhấp vào liên kết
+            document.getElementById('fileInput').click();
+        }
+
+        // Xử lý sự kiện khi người dùng chọn tệp
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            var fileInput = event.target;
+            if (fileInput.files.length > 0) {
+                var selectedFile = fileInput.files[0];
+                playSelectedVideo(selectedFile);
+            }
+        });
+
+        function playSelectedVideo(file) {
+            // Đọc tệp và chuyển đổi thành Base64
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                base64Data = e.target.result.split(',')[1];
+
+                // Hiển thị giá trị Base64
+                document.getElementById('base64Value').innerHTML = base64Data;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function convertVideoToBase64() {
+            // Kiểm tra xem base64Data đã được đặt hay chưa
+            if (!base64Data) {
+                alert("Please choose a file first.");
+                return;
+            }
+
+            // Tạo một đối tượng video
+            var video = document.createElement('video');
+
+            // Thiết lập thuộc tính src của video với dữ liệu base64
+            video.src = 'data:video/mp4;base64,' + base64Data;
+            console.log("🚀 ~ file: base64.html:68 ~ convertVideoToBase64 ~ video.src:", video.src)
+
+            // Tự động phát video khi đã tải xong (tùy thuộc vào trình duyệt)
+            video.autoplay = true;
+
+            // Hiển thị controls để điều khiển video
+            video.controls = true;
+
+            // Thêm video vào body hoặc một phần tử khác của trang web
+            document.body.appendChild(video);
+        }
+    </script>
+
+</body>
+
+</html>
